@@ -7,7 +7,7 @@
 #define READING_DELAY_SECONDS   10
 
 #define INFLUX_DB_ADDRESS       "https://192.168.2.170:8086"    //Modify
-#define INFLUX_DB_NAME          "clima-domus-demo"              //Modify
+#define INFLUX_DB_NAME          "smart-meter"                   //Modify
 #define INFLUX_DB_QUERY         "/write?db="
 #define INFLUX_DB_PRECISION     "&precision=s" 
 
