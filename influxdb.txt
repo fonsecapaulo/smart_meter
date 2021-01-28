@@ -1,0 +1,52 @@
+-------
+create RETENTION POLICY "2_weeks" ON "smart-meter" DURATION 2w REPLICATION 1 DEFAULT
+create RETENTION POLICY "long" ON "smart-meter" DURATION INF REPLICATION 1
+
+-- elec_energy_downsample
+CREATE 
+    CONTINUOUS QUERY "cq_elec_energy_downsample" 
+ON "smart-meter" 
+BEGIN 
+    SELECT 
+        (last("consumption_high_tariff") - first("consumption_high_tariff")) as "consumption_high_tariff", 
+        (last("consumption_low_tariff") - first("consumption_low_tariff")) as "consumption_low_tariff", 
+        (last("return_high_tariff") - first("return_high_tariff")) as "return_high_tariff",
+        (last("return_low_tariff") - first("return_low_tariff")) as "return_low_tariff" 
+    INTO 
+        "smart-meter"."long"."elec_energy_downsample" 
+    FROM 
+        "electricity" 
+    GROUP BY 
+        time(1h) 
+END
+-- elec_power_downsample
+CREATE 
+    CONTINUOUS QUERY "cq_elec_power_downsample" 
+ON "smart-meter" 
+BEGIN 
+    SELECT 
+        mean(actual_consumption) AS "actual_consumption", 
+        mean(actual_return) AS "actual_return" 
+    INTO 
+        "smart-meter"."long"."elec_power_downsample" 
+    FROM 
+        "electricity" 
+    GROUP BY 
+        time(5m) 
+END
+
+-- gas
+CREATE 
+    CONTINUOUS QUERY "cq_gas_downsample" 
+ON 
+    "smart-meter" 
+BEGIN 
+    SELECT 
+        (last("actual_consumption" ) - first("actual_consumption") )/ 1000 as "consumption" 
+    INTO 
+        "smart-meter"."long"."gas_downsample" 
+    FROM 
+        "gas" 
+    GROUP BY 
+        time(1h) 
+END

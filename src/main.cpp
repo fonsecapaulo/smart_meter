@@ -48,6 +48,8 @@ void setupWifiHTTP(){
     #endif
         
     WiFi.begin(SECRET_SSID, SECRET_PASSWORD);             //WiFi connection
+    WiFi.mode(WIFI_STA);
+    
     while (WiFi.status() != WL_CONNECTED) {               //Wait for the WiFI connection completion
         delay(500);
         #ifdef DEBUG 
